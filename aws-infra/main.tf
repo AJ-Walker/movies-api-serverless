@@ -3,7 +3,8 @@ provider "aws" {
 }
 
 locals {
-  files = fileset("${path.module}/${var.local_images_folder}", "*")
+  files      = fileset("${path.module}/${var.local_images_folder}", "*")
+  movie_data = jsondecode(file("${path.module}/movies.json"))
 }
 
 # S3
@@ -40,7 +41,36 @@ resource "aws_s3_bucket_policy" "allow_get_images_policy" {
   policy = data.aws_iam_policy_document.allow_get_s3_images_policy.json
 }
 
-# Lambda
+
+  tags = {
+    Name        = "Movies REST API"
+    Environment = "Dev"
+  }
+}
+
+resource "aws_s3_object" "movies_rest_api_images" {
+  for_each     = local.files
+  bucket       = aws_s3_bucket.movies_rest_api_bucket.id
+  key          = "${var.s3_images_prefix}/${each.value}"
+  source       = "${path.module}/${var.local_images_folder}/${each.value}"
+  etag         = filemd5("${path.module}/${var.local_images_folder}/${each.value}")
+  content_type = "application/octet-stream"
+}
+
+resource "aws_s3_bucket_public_access_block" "movies_rest_api_bucket_public_access" {
+  bucket = aws_s3_bucket.movies_rest_api_bucket.id
+
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
+
+}
+
+resource "aws_s3_bucket_policy" "allow_get_images_policy" {
+  bucket = aws_s3_bucket.movies_rest_api_bucket.id
+  policy = data.aws_iam_policy_document.allow_get_s3_images_policy.json
+}
 
 # DynamoDB
 resource "aws_dynamodb_table" "movies_db" {
@@ -64,22 +94,24 @@ resource "aws_dynamodb_table" "movies_db" {
   }
 }
 
-# resource "aws_dynamodb_table_item" "movie_item" {
-#   table_name = aws_dynamodb_table.movies-db.name
-#   hash_key   = aws_dynamodb_table.movies-db.hash_key
-#   range_key  = aws_dynamodb_table.movies-db.range_key
+resource "aws_dynamodb_table_item" "movie_item" {
+  table_name = aws_dynamodb_table.movies_db.name
+  hash_key   = aws_dynamodb_table.movies_db.hash_key
+  range_key  = aws_dynamodb_table.movies_db.range_key
 
-#   item = <<ITEM
-#   {
-#   "movieId": {"S": "123"},
-#   "title": {"S": "Pulp Fiction"},
-#   "releaseYear": {"N": "1994"},
-#   "genre": {"S": "Crime, Drama"},
-#   "coverUrl": {"S": "image.png"},
-#   "generatedSummary": {"S": ""}
-#   }
-#   ITEM
-# }
+  count = length(local.movie_data)
+
+  item = <<ITEM
+  {
+  "movieId": {"S": "${local.movie_data[count.index].movieId}"},
+  "title": {"S": "${local.movie_data[count.index].title}"},
+  "releaseYear": {"N": "${local.movie_data[count.index].releaseYear}"},
+  "genre": {"S": "${local.movie_data[count.index].genre}"},
+  "coverUrl": {"S": "${local.movie_data[count.index].coverUrl}"},
+  "generatedSummary": {"S": ""}
+  }
+  ITEM
+}
 
 # Lambda
 resource "aws_lambda_function" "movies_api_lambda" {

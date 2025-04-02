@@ -1,0 +1,142 @@
+[
+  {
+    "movieId": "01956766-a4a2-77e0-bb6c-4edb920e8013",
+    "title": "Pulp Fiction",
+    "releaseYear": 1994,
+    "genre": "Crime, Drama",
+    "coverUrl": "https://movies-api-data.s3.ap-south-1.amazonaws.com/images/pulp-fiction-1994.jpg"
+  },
+  {
+    "movieId": "01956766-a4a2-781b-9b0a-5731875f4a77",
+    "title": "The Matrix",
+    "releaseYear": 1999,
+    "genre": "Science Fiction, Action",
+    "coverUrl": "https://movies-api-data.s3.ap-south-1.amazonaws.com/images/the-matrix-1999.jpg"
+  },
+  {
+    "movieId": "01956766-a4a2-7832-8da3-bb885db47334",
+    "title": "Forrest Gump",
+    "releaseYear": 1994,
+    "genre": "Drama, Romance",
+    "coverUrl": "https://movies-api-data.s3.ap-south-1.amazonaws.com/images/forrest-gump-1994.jpg"
+  },
+  {
+    "movieId": "01956766-a4a2-7836-bd37-0c1cb0ac1f3d",
+    "title": "The Godfather",
+    "releaseYear": 1972,
+    "genre": "Crime, Drama",
+    "coverUrl": "https://movies-api-data.s3.ap-south-1.amazonaws.com/images/the-godfather-1972.jpg"
+  },
+  {
+    "movieId": "01956766-a4a2-7839-8ed8-f51ccda423a5",
+    "title": "Interstellar",
+    "releaseYear": 2014,
+    "genre": "Science Fiction, Adventure",
+    "coverUrl": "https://movies-api-data.s3.ap-south-1.amazonaws.com/images/interstellar-2014.jpg"
+  },
+  {
+    "movieId": "01956766-a4a2-783c-87f8-e47b5b90a46d",
+    "title": "Titanic",
+    "releaseYear": 1997,
+    "genre": "Romance, Drama",
+    "coverUrl": "https://movies-api-data.s3.ap-south-1.amazonaws.com/images/titanic-1997.jpg"
+  },
+  {
+    "movieId": "01956766-a4a2-783f-bb3d-788a18d9a8a1",
+    "title": "Jurassic Park",
+    "releaseYear": 1993,
+    "genre": "Science Fiction, Adventure",
+    "coverUrl": "https://movies-api-data.s3.ap-south-1.amazonaws.com/images/jurassic-park-1993.jpg"
+  },
+  {
+    "movieId": "01956766-a4a2-7842-9b6d-0a737174e934",
+    "title": "The Lion King",
+    "releaseYear": 1994,
+    "genre": "Animation, Adventure",
+    "coverUrl": "https://movies-api-data.s3.ap-south-1.amazonaws.com/images/the-lion-king-1994.jpg"
+  },
+  {
+    "movieId": "01956766-a4a2-7845-8dac-294bd2ce0f65",
+    "title": "Fight Club",
+    "releaseYear": 1999,
+    "genre": "Drama, Thriller",
+    "coverUrl": "https://movies-api-data.s3.ap-south-1.amazonaws.com/images/fight-club-1999.jpg"
+  },
+  {
+    "movieId": "01956766-a4a2-7849-bc25-038cd80bc822",
+    "title": "Avatar",
+    "releaseYear": 2009,
+    "genre": "Science Fiction, Action",
+    "coverUrl": "https://movies-api-data.s3.ap-south-1.amazonaws.com/images/avatar-2009.jpg"
+  },
+  {
+    "movieId": "01956766-a4a2-784c-8839-1be816404fd8",
+    "title": "The Empire Strikes Back",
+    "releaseYear": 1980,
+    "genre": "Science Fiction, Action",
+    "coverUrl": "https://movies-api-data.s3.ap-south-1.amazonaws.com/images/the-empire-strikes-back-1980.jpg"
+  },
+  {
+    "movieId": "01956766-a4a2-784f-a580-929cbb62f7de",
+    "title": "Schindler's List",
+    "releaseYear": 1993,
+    "genre": "Drama, History",
+    "coverUrl": "https://movies-api-data.s3.ap-south-1.amazonaws.com/images/schindlers-list-1993.jpg"
+  },
+  {
+    "movieId": "01956766-a4a2-7852-885b-b22d32e88a52",
+    "title": "The Lord of the Rings: The Fellowship of the Ring",
+    "releaseYear": 2001,
+    "genre": "Fantasy, Adventure",
+    "coverUrl": "https://movies-api-data.s3.ap-south-1.amazonaws.com/images/lotr-the-fellowship-of-rings-2001.jpg"
+  },
+  {
+    "movieId": "01956766-a4a2-7855-8897-54b5c02bb90d",
+    "title": "Gladiator",
+    "releaseYear": 2000,
+    "genre": "Action, Drama",
+    "coverUrl": "https://movies-api-data.s3.ap-south-1.amazonaws.com/images/gladiator-2000.jpg"
+  },
+  {
+    "movieId": "01956766-a4a2-7858-9295-189f7d4f60c4",
+    "title": "The Silence of the Lambs",
+    "releaseYear": 1991,
+    "genre": "Thriller, Crime",
+    "coverUrl": "https://movies-api-data.s3.ap-south-1.amazonaws.com/images/the-silence-of-the-lambs-1991.jpg"
+  },
+  {
+    "movieId": "01956766-a4a2-785b-8b61-b1f7261420a5",
+    "title": "Back to the Future",
+    "releaseYear": 1985,
+    "genre": "Science Fiction, Adventure",
+    "coverUrl": "https://movies-api-data.s3.ap-south-1.amazonaws.com/images/back-to-the-future-1985.jpg"
+  },
+  {
+    "movieId": "01956766-a4a2-785e-a134-049657a1a75e",
+    "title": "Parasite",
+    "releaseYear": 2019,
+    "genre": "Thriller, Drama",
+    "coverUrl": "https://movies-api-data.s3.ap-south-1.amazonaws.com/images/parasite-2019.jpg"
+  },
+  {
+    "movieId": "01956766-a4a2-7861-a582-484291c04609",
+    "title": "Mad Max: Fury Road",
+    "releaseYear": 2015,
+    "genre": "Action, Science Fiction",
+    "coverUrl": "https://movies-api-data.s3.ap-south-1.amazonaws.com/images/max-mad-fury-road-2015.jpg"
+  },
+  {
+    "movieId": "01956766-a4a2-7864-b664-9b6ad88bf123",
+    "title": "The Avengers",
+    "releaseYear": 2012,
+    "genre": "Action, Superhero",
+    "coverUrl": "https://movies-api-data.s3.ap-south-1.amazonaws.com/images/the-avengers-2012.jpg"
+  },
+  {
+    "movieId": "01956766-a4a2-7867-acb7-3ffb82a149d5",
+    "title": "Good Will Hunting",
+    "releaseYear": 1997,
+    "genre": "Drama",
+    "coverUrl": "https://movies-api-data.s3.ap-south-1.amazonaws.com/images/good-will-hunting-1997.jpg"
+  }
+]
