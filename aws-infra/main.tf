@@ -6,65 +6,63 @@ locals {
   files = fileset("${path.module}/${var.local_images_folder}", "*")
 }
 
-# API Gateway
-
 # S3
-# resource "aws_s3_bucket" "movies_rest_api_bucket" {
-#   bucket = var.bucket_name
+resource "aws_s3_bucket" "movies_rest_api_bucket" {
+  bucket = var.bucket_name
 
-#   tags = {
-#     Name        = "Movies REST API"
-#     Environment = "Dev"
-#   }
-# }
+  tags = {
+    Name        = "Movies REST API"
+    Environment = "Dev"
+  }
+}
 
-# resource "aws_s3_object" "movies_rest_api_images" {
-#   for_each     = local.files
-#   bucket       = aws_s3_bucket.movies_rest_api_bucket.id
-#   key          = "${var.s3_images_prefix}/${each.value}"
-#   source       = "${path.module}/${var.local_images_folder}/${each.value}"
-#   etag         = filemd5("${path.module}/${var.local_images_folder}/${each.value}")
-#   content_type = "application/octet-stream"
-# }
+resource "aws_s3_object" "movies_rest_api_images" {
+  for_each     = local.files
+  bucket       = aws_s3_bucket.movies_rest_api_bucket.id
+  key          = "${var.s3_images_prefix}/${each.value}"
+  source       = "${path.module}/${var.local_images_folder}/${each.value}"
+  etag         = filemd5("${path.module}/${var.local_images_folder}/${each.value}")
+  content_type = "application/octet-stream"
+}
 
-# resource "aws_s3_bucket_public_access_block" "movies_rest_api_bucket_public_access" {
-#   bucket = aws_s3_bucket.movies_rest_api_bucket.id
+resource "aws_s3_bucket_public_access_block" "movies_rest_api_bucket_public_access" {
+  bucket = aws_s3_bucket.movies_rest_api_bucket.id
 
-#   block_public_acls       = false
-#   block_public_policy     = false
-#   ignore_public_acls      = false
-#   restrict_public_buckets = false
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
 
-# }
+}
 
-# resource "aws_s3_bucket_policy" "allow_get_images_policy" {
-#   bucket = aws_s3_bucket.movies_rest_api_bucket.id
-#   policy = data.aws_iam_policy_document.allow_get_s3_images_policy.json
-# }
+resource "aws_s3_bucket_policy" "allow_get_images_policy" {
+  bucket = aws_s3_bucket.movies_rest_api_bucket.id
+  policy = data.aws_iam_policy_document.allow_get_s3_images_policy.json
+}
 
 # Lambda
 
 # DynamoDB
-# resource "aws_dynamodb_table" "movies_db" {
-#   name         = "Movies"
-#   billing_mode = "PAY_PER_REQUEST"
-#   hash_key     = "movieId"
-#   range_key    = "releaseYear"
+resource "aws_dynamodb_table" "movies_db" {
+  name         = "Movies"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "movieId"
+  range_key    = "releaseYear"
 
-#   attribute {
-#     name = "movieId"
-#     type = "S"
-#   }
-#   attribute {
-#     name = "releaseYear"
-#     type = "N"
-#   }
+  attribute {
+    name = "movieId"
+    type = "S"
+  }
+  attribute {
+    name = "releaseYear"
+    type = "N"
+  }
 
-#   tags = {
-#     "Name"        = "Movies REST API"
-#     "Environment" = "Dev"
-#   }
-# }
+  tags = {
+    "Name"        = "Movies REST API"
+    "Environment" = "Dev"
+  }
+}
 
 # resource "aws_dynamodb_table_item" "movie_item" {
 #   table_name = aws_dynamodb_table.movies-db.name
@@ -91,11 +89,18 @@ resource "aws_lambda_function" "movies_api_lambda" {
   handler       = "main"
   filename      = "${path.module}/lambda_function_payload.zip"
 
+  timeout = 180
+
   source_code_hash = data.archive_file.lambda.output_base64sha256
   environment {
     variables = {
       REGION = var.aws_region
     }
+  }
+
+  tags = {
+    Name        = "Movies REST API"
+    Environment = "Dev"
   }
 }
 
@@ -104,9 +109,19 @@ resource "aws_iam_role" "lambda_execution_role" {
   assume_role_policy = data.aws_iam_policy_document.lambda_execution_policy.json
 }
 
-resource "aws_iam_role_policy_attachment" "lambda_policy" {
+resource "aws_iam_role_policy_attachment" "lambda_cloudwatch_policy_attach" {
   role       = aws_iam_role.lambda_execution_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_access_policy_attach" {
+  role       = aws_iam_role.lambda_execution_role.name
+  policy_arn = aws_iam_policy.lambda_access_policy.arn
+}
+
+resource "aws_iam_policy" "lambda_access_policy" {
+  name   = "lambda_dynamodb_policy"
+  policy = data.aws_iam_policy_document.allow_lambda_access_policy_doc.json
 }
 
 
@@ -115,7 +130,7 @@ resource "aws_lambda_permission" "apigw_lambda" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.movies_api_lambda.function_name
   principal     = "apigateway.amazonaws.com"
-  source_arn = "${aws_api_gateway_rest_api.movies_api_gateway.execution_arn}/*"
+  source_arn    = "${aws_api_gateway_rest_api.movies_api_gateway.execution_arn}/*"
 }
 
 # API Gateway
@@ -124,6 +139,11 @@ resource "aws_api_gateway_rest_api" "movies_api_gateway" {
 
   endpoint_configuration {
     types = ["REGIONAL"]
+  }
+
+  tags = {
+    Name        = "Movies REST API"
+    Environment = "Dev"
   }
 }
 

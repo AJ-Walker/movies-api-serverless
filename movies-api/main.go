@@ -44,6 +44,7 @@ const (
 	AWS_REGION  string = "ap-south-1"
 	BUCKET_NAME string = "movies-api-data"
 	TABLE_NAME  string = "Movies"
+	MODEL_ID    string = "anthropic.claude-3-sonnet-20240229-v1:0"
 )
 
 func main() {
@@ -54,14 +55,29 @@ func main() {
 	}
 	// fmt.Println(movies)
 
-	jsonD, err := json.Marshal(movies)
+	_, err := json.Marshal(movies)
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println(string(jsonD))
+	// fmt.Println(string(jsonD))
 
 	// Insert into dynamodb
 	if err := PutItems_DynamoDB(movies); err != nil {
 		fmt.Println(err)
 	}
+	// if err := GetMovies(); err != nil {
+	// 	fmt.Println(err)
+	// }
+	// if err := GetMoviesByYear(2025); err != nil {
+	// 	fmt.Println(err)
+	// }
+	// if err := GetMovieSummary("0195ea79-8284-772c-a501-61f2a6369726"); err != nil {
+	// 	fmt.Println(err)
+	// }
+	// if err := UpdateMovie_DB("0195ea79-8284-772c-a501-61f2a6369726", "1994", "test2"); err != nil {
+	// 	fmt.Println(err)
+	// }
+	// if err := generateSummary("Provide a short summary of 100 words for the movie 'Forrest Gump', released in 1994, which falls under the genre Drama, Romance."); err != nil {
+	// 	fmt.Println(err)
+	// }
 }
