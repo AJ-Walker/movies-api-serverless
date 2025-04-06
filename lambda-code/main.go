@@ -30,9 +30,10 @@ func HandleRequest(ctx context.Context, event events.APIGatewayProxyRequest) (ev
 	log.Printf("Event: %v\n", event)
 
 	log.Printf("Resource: %v\n", event.Resource)
+	log.Printf("Path: %v\n", event.Path)
 	log.Printf("Query Params: %v\n", event.QueryStringParameters)
 
-	switch event.Resource {
+	switch event.Path {
 	case "/api/movies":
 		// call movies func
 
