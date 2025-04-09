@@ -33,25 +33,48 @@ func HandleRequest(ctx context.Context, event events.APIGatewayProxyRequest) (ev
 	log.Printf("Path: %v\n", event.Path)
 	log.Printf("Query Params: %v\n", event.QueryStringParameters)
 
-	switch event.Path {
-	case "/api/movies":
-		// call movies func
+	switch {
+	case event.Path == "/api/movies" && event.HTTPMethod == "GET":
+		// movies related apis
 
 		if year, ok := event.QueryStringParameters["year"]; ok {
 			return getMoviesByYear(year)
+		} else if movieId, ok := event.QueryStringParameters["movieId"]; ok {
+			return getMovieById(movieId)
 		} else {
 			return getMovies()
 		}
 
-	case "/api/movies/summary":
-		// call movies summary func
+	case event.Path == "/api/movies" && event.HTTPMethod == "POST":
+		// Add movie api
+		return addMovie()
 
-		movieId, ok := event.QueryStringParameters["movieId"]
+	case event.Path == "/api/movies" && event.HTTPMethod == "PUT":
+		// Update existing movie api
 
-		if !ok {
+		if movieId, ok := event.QueryStringParameters["movieId"]; ok {
+			return updateMovie(movieId)
+		} else {
 			return response(http.StatusNotFound, false, "movieId query param missing", nil), nil
 		}
-		return getMovieSummary(movieId)
+
+	case event.Path == "/api/movies" && event.HTTPMethod == "DELETE":
+		// Delete movie by Id
+
+		if movieId, ok := event.QueryStringParameters["movieId"]; ok {
+			return deleteMovie(movieId)
+		} else {
+			return response(http.StatusNotFound, false, "movieId query param missing", nil), nil
+		}
+
+	case event.Path == "/api/movies/summary" && event.HTTPMethod == "GET":
+		// movies summary related apis
+
+		if movieId, ok := event.QueryStringParameters["movieId"]; ok {
+			return getMovieSummary(movieId)
+		} else {
+			return response(http.StatusNotFound, false, "movieId query param missing", nil), nil
+		}
 	}
 	return response(http.StatusInternalServerError, false, "Wrong path provided", nil), nil
 }
@@ -76,7 +99,7 @@ func getMovies() (events.APIGatewayProxyResponse, error) {
 	}
 
 	if len(result) == 0 {
-		return response(http.StatusOK, false, "No movies found", nil), nil
+		return response(http.StatusNotFound, false, "No movies found", nil), nil
 	}
 
 	return response(http.StatusOK, true, "Movies fetched successfully.", result), nil
@@ -85,7 +108,7 @@ func getMovies() (events.APIGatewayProxyResponse, error) {
 func getMoviesByYear(year string) (events.APIGatewayProxyResponse, error) {
 	log.Print("Inside getMoviesByYear func")
 	if year == "" {
-		return response(http.StatusBadRequest, false, "year field missing", nil), nil
+		return response(http.StatusBadRequest, false, "year cannot be empty", nil), nil
 	}
 
 	yearInt, err := strconv.Atoi(year)
@@ -151,4 +174,43 @@ func response(statusCode int, status bool, message string, data any) events.APIG
 		StatusCode: statusCode,
 		Body:       string(jsonRes),
 	}
+}
+
+func getMovieById(movieId string) (events.APIGatewayProxyResponse, error) {
+	log.Print("Inside getMovieById func")
+
+	if movieId == "" {
+		return response(http.StatusBadRequest, false, "movieId cannot be empty", nil), nil
+	}
+
+	movie, err := GetMovieById_DB(movieId)
+
+	if err != nil {
+		return response(http.StatusBadRequest, false, err.Error(), nil), err
+	}
+	return response(http.StatusOK, true, "Movie fetched successfully", movie), nil
+}
+
+func addMovie() (events.APIGatewayProxyResponse, error) {
+	log.Print("Inside addMovie func")
+
+	return response(http.StatusOK, true, "add movie", nil), nil
+}
+
+func updateMovie(movieId string) (events.APIGatewayProxyResponse, error) {
+	log.Print("Inside updateMovie func")
+	if movieId == "" {
+		return response(http.StatusBadRequest, false, "movieId cannot be empty", nil), nil
+	}
+
+	return response(http.StatusOK, true, "update movie", nil), nil
+}
+
+func deleteMovie(movieId string) (events.APIGatewayProxyResponse, error) {
+	log.Print("Inside deleteMovie func")
+	if movieId == "" {
+		return response(http.StatusBadRequest, false, "movieId cannot be empty", nil), nil
+	}
+
+	return response(http.StatusOK, true, "delete movie", nil), nil
 }

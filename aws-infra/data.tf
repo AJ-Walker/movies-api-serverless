@@ -32,7 +32,7 @@ data "aws_iam_policy_document" "allow_lambda_access_policy_doc" {
     sid    = "1"
     effect = "Allow"
 
-    actions   = ["dynamodb:Scan", "dynamodb:Query", "dynamodb:UpdateItem"]
+    actions   = ["dynamodb:Scan", "dynamodb:Query", "dynamodb:UpdateItem", "dynamodb:GetItem"]
     resources = [aws_dynamodb_table.movies_db.arn]
   }
   statement {

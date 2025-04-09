@@ -46,16 +46,16 @@ resource "aws_dynamodb_table" "movies_db" {
   name         = "Movies"
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "movieId"
-  range_key    = "releaseYear"
+  # range_key    = "releaseYear"
 
   attribute {
     name = "movieId"
     type = "S"
   }
-  attribute {
-    name = "releaseYear"
-    type = "N"
-  }
+  # attribute {
+  #   name = "releaseYear"
+  #   type = "N"
+  # }
 
   tags = {
     "Name"        = "Movies REST API"

@@ -62,9 +62,9 @@ func main() {
 	// fmt.Println(string(jsonD))
 
 	// Insert into dynamodb
-	if err := PutItems_DynamoDB(movies); err != nil {
-		fmt.Println(err)
-	}
+	// if err := PutItems_DynamoDB(movies); err != nil {
+	// 	fmt.Println(err)
+	// }
 	// if err := GetMovies(); err != nil {
 	// 	fmt.Println(err)
 	// }
@@ -80,4 +80,7 @@ func main() {
 	// if err := generateSummary("Provide a short summary of 100 words for the movie 'Forrest Gump', released in 1994, which falls under the genre Drama, Romance."); err != nil {
 	// 	fmt.Println(err)
 	// }
+	if err := GetMovieById("01956766-a4a2-7836-bd37-0c1cb0ac1f3d"); err != nil {
+		fmt.Println(err)
+	}
 }

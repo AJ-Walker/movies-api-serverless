@@ -313,3 +313,39 @@ func UpdateMovie(movieId string, year string, summary string) error {
 
 	return nil
 }
+
+func GetMovieById(movieId string) error {
+	cfg, err := config.LoadDefaultConfig(context.TODO())
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	dynamoDb_Client := dynamodb.NewFromConfig(cfg, func(o *dynamodb.Options) {
+		o.Region = AWS_REGION
+	})
+
+	result, err := dynamoDb_Client.GetItem(context.TODO(), &dynamodb.GetItemInput{
+		TableName: aws.String(TABLE_NAME),
+		Key: map[string]types.AttributeValue{
+			"movieId": &types.AttributeValueMemberS{
+				Value: movieId,
+			},
+		},
+	},
+	)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+	if len(result.Item) == 0 {
+		fmt.Println("no movie found")
+	}
+	var movie Movie
+	if err := attributevalue.UnmarshalMap(result.Item, &movie); err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println(movie)
+	return nil
+}
