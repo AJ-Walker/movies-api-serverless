@@ -2,7 +2,9 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"log"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
@@ -347,5 +349,49 @@ func GetMovieById(movieId string) error {
 	}
 
 	fmt.Println(movie)
+	return nil
+}
+
+func DeleteMovieById(movieId string) error {
+	log.Print("Inside DeleteMovieById_DB func")
+
+	cfg, err := config.LoadDefaultConfig(context.TODO())
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	dynamoDb_Client := dynamodb.NewFromConfig(cfg, func(o *dynamodb.Options) {
+		o.Region = AWS_REGION
+	})
+
+	res, err := dynamoDb_Client.DeleteItem(context.TODO(), &dynamodb.DeleteItemInput{
+		TableName: aws.String(TABLE_NAME),
+		Key: map[string]types.AttributeValue{
+			"movieId": &types.AttributeValueMemberS{
+				Value: movieId,
+			},
+		},
+		ConditionExpression: aws.String("attribute_exists(movieId)"),
+	})
+
+	fmt.Print(res)
+
+	if err != nil {
+		var cfe *types.ConditionalCheckFailedException
+		if errors.As(err, &cfe) {
+			fmt.Println("Conditional check failed:", cfe.Error())
+		} else {
+			fmt.Println("PutItem error:", err)
+		}
+	} else {
+		fmt.Println("PutItem succeeded!")
+	}
+
+	if err != nil {
+		fmt.Printf("failed to delete item from DynamoDB: %v\n", err)
+		return nil
+	}
+
 	return nil
 }

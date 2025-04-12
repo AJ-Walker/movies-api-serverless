@@ -186,7 +186,7 @@ func getMovieById(movieId string) (events.APIGatewayProxyResponse, error) {
 	movie, err := GetMovieById_DB(movieId)
 
 	if err != nil {
-		return response(http.StatusBadRequest, false, err.Error(), nil), err
+		return response(http.StatusBadRequest, false, err.Error(), nil), nil
 	}
 	return response(http.StatusOK, true, "Movie fetched successfully", movie), nil
 }
@@ -212,5 +212,9 @@ func deleteMovie(movieId string) (events.APIGatewayProxyResponse, error) {
 		return response(http.StatusBadRequest, false, "movieId cannot be empty", nil), nil
 	}
 
-	return response(http.StatusOK, true, "delete movie", nil), nil
+	if err := DeleteMovieById_DB(movieId); err != nil {
+		return response(http.StatusBadRequest, false, err.Error(), nil), nil
+	}
+
+	return response(http.StatusOK, true, "Movie deleted successfully", nil), nil
 }

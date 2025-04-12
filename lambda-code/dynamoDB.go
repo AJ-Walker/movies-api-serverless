@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 
@@ -189,4 +190,30 @@ func GetMovieById_DB(movieId string) (Movie, error) {
 	}
 
 	return movie, nil
+}
+
+func DeleteMovieById_DB(movieId string) error {
+	log.Print("Inside DeleteMovieById_DB func")
+
+	_, err := DynamoClient.DeleteItem(context.TODO(), &dynamodb.DeleteItemInput{
+		TableName: aws.String(TABLE_NAME),
+		Key: map[string]types.AttributeValue{
+			"movieId": &types.AttributeValueMemberS{
+				Value: movieId,
+			},
+		},
+		ConditionExpression: aws.String("attribute_exists(movieId)"),
+	})
+
+	var conditionError *types.ConditionalCheckFailedException
+
+	if err != nil {
+		if errors.As(err, &conditionError) {
+			return fmt.Errorf("No movie found")
+		}
+		log.Printf("failed to delete item from DynamoDB: %v", err)
+		return fmt.Errorf("failed to delete item from DynamoDB: %w", err)
+	}
+
+	return nil
 }
