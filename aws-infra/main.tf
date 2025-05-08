@@ -46,16 +46,16 @@ resource "aws_dynamodb_table" "movies_db" {
   name         = "Movies"
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "movieId"
-  range_key    = "releaseYear"
+  # range_key    = "releaseYear"
 
   attribute {
     name = "movieId"
     type = "S"
   }
-  attribute {
-    name = "releaseYear"
-    type = "N"
-  }
+  # attribute {
+  #   name = "releaseYear"
+  #   type = "N"
+  # }
 
   tags = {
     "Name"        = "Movies REST API"
@@ -142,6 +142,8 @@ resource "aws_api_gateway_rest_api" "movies_api_gateway" {
     types = ["REGIONAL"]
   }
 
+  binary_media_types = ["multipart/form-data"]
+
   tags = {
     Name        = "Movies REST API"
     Environment = "Dev"
@@ -189,6 +191,7 @@ resource "aws_api_gateway_deployment" "movies_api_deployment" {
       aws_api_gateway_resource.movies_proxy_resource.id,
       aws_api_gateway_method.movies_any_method.id,
       aws_api_gateway_integration.movies_lambda_integration.id,
+      aws_api_gateway_rest_api.movies_api_gateway.binary_media_types
     ]))
   }
 
