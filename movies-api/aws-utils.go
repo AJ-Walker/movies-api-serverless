@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
@@ -91,10 +92,6 @@ func PutItems_DynamoDB(movies []Movie) error {
 	fmt.Println(batchOutput)
 	return nil
 }
-
-// func PutObject_S3(movies []Movie) {
-
-// }
 
 func GetMovies() error {
 	cfg, err := config.LoadDefaultConfig(context.TODO())
@@ -394,4 +391,90 @@ func DeleteMovieById(movieId string) error {
 	}
 
 	return nil
+}
+
+func AddMovie(movie Movie) error {
+	fmt.Println("AddMovie")
+	cfg, err := config.LoadDefaultConfig(context.TODO())
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	dynamoDb_Client := dynamodb.NewFromConfig(cfg, func(o *dynamodb.Options) {
+		o.Region = AWS_REGION
+	})
+
+	// check if movie is being created with same title
+	res, _ := GetMovieByTitle_DB(movie.Title)
+
+	if strings.Trim(strings.ToLower(res.Title), " ") == strings.Trim(strings.ToLower(movie.Title), " ") {
+		log.Printf("Movie with same title already exists")
+		return err
+	}
+
+	item, err := attributevalue.MarshalMap(movie)
+
+	if err != nil {
+		log.Printf("Couldn't marshall response. Here's why: %v\n", err)
+		return err
+	}
+
+	result, err := dynamoDb_Client.PutItem(context.TODO(), &dynamodb.PutItemInput{
+		TableName: aws.String(TABLE_NAME),
+		Item:      item,
+	})
+
+	if err != nil {
+		log.Printf("Couldn't add item to table. Here's why: %v\n", err)
+		return err
+	}
+
+	var movie1 Movie
+	if err := attributevalue.UnmarshalMap(result.Attributes, &movie1); err != nil {
+		log.Printf("Couldn't unmarshal reponse, %v", err)
+		return err
+	}
+
+	log.Print(movie1)
+
+	return nil
+}
+
+func GetMovieByTitle_DB(title string) (Movie, error) {
+	log.Print("Inside GetMoviesByTitle_DB func")
+
+	cfg, err := config.LoadDefaultConfig(context.TODO())
+	if err != nil {
+		fmt.Println(err)
+		return Movie{}, err
+	}
+
+	dynamoDb_Client := dynamodb.NewFromConfig(cfg, func(o *dynamodb.Options) {
+		o.Region = AWS_REGION
+	})
+
+	keyEx := expression.Key("title").Equal(expression.Value(title))
+	expr, err := expression.NewBuilder().WithKeyCondition(keyEx).Build()
+
+	if err != nil {
+		return Movie{}, err
+	}
+
+	result, err := dynamoDb_Client.Scan(context.TODO(), &dynamodb.ScanInput{
+		TableName:                 aws.String(TABLE_NAME),
+		FilterExpression:          expr.KeyCondition(),
+		ExpressionAttributeNames:  expr.Names(),
+		ExpressionAttributeValues: expr.Values(),
+	})
+	log.Print(result)
+	if err != nil {
+		return Movie{}, err
+	}
+	var movie Movie
+	if err := attributevalue.UnmarshalMap(result.Items[0], &movie); err != nil {
+		return Movie{}, err
+	}
+	log.Print(movie)
+	return movie, nil
 }

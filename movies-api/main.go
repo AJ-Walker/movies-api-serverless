@@ -83,7 +83,18 @@ func main() {
 	// if err := GetMovieById("01956766-a4a2-7836-bd37-0c1cb0ac1f3d"); err != nil {
 	// 	fmt.Println(err)
 	// }
-	if err := DeleteMovieById("01956766-a4a2-7836-bd37-0c1cb0ac1f3d"); err != nil {
+	// if err := DeleteMovieById("01956766-a4a2-7836-bd37-0c1cb0ac1f3d"); err != nil {
+	// 	fmt.Println(err)
+	// }
+	movie := Movie{
+		MovieId:          "1234",
+		Title:            "Bird box",
+		ReleaseYear:      2018,
+		Genre:            "Horror",
+		CoverUrl:         "123",
+		GeneratedSummary: "",
+	}
+	if err := AddMovie(movie); err != nil {
 		fmt.Println(err)
 	}
 }
