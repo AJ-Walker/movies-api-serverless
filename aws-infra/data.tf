@@ -46,7 +46,7 @@ data "aws_iam_policy_document" "allow_lambda_access_policy_doc" {
     sid    = "3"
     effect = "Allow"
 
-    actions   = ["s3:PutObject"]
+    actions   = ["s3:PutObject", "s3:DeleteObject"]
     resources = ["${aws_s3_bucket.movies_rest_api_bucket.arn}/${var.s3_images_prefix}/*"]
   }
 }

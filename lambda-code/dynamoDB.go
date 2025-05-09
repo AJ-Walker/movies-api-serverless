@@ -192,10 +192,10 @@ func GetMovieById_DB(movieId string) (Movie, error) {
 	return movie, nil
 }
 
-func DeleteMovieById_DB(movieId string) error {
+func DeleteMovieById_DB(movieId string) (Movie, error) {
 	log.Print("Inside DeleteMovieById_DB func")
 
-	_, err := DynamoClient.DeleteItem(context.TODO(), &dynamodb.DeleteItemInput{
+	result, err := DynamoClient.DeleteItem(context.TODO(), &dynamodb.DeleteItemInput{
 		TableName: aws.String(TABLE_NAME),
 		Key: map[string]types.AttributeValue{
 			"movieId": &types.AttributeValueMemberS{
@@ -203,19 +203,25 @@ func DeleteMovieById_DB(movieId string) error {
 			},
 		},
 		ConditionExpression: aws.String("attribute_exists(movieId)"),
+		ReturnValues:        types.ReturnValueAllOld,
 	})
 
 	var conditionError *types.ConditionalCheckFailedException
 
 	if err != nil {
 		if errors.As(err, &conditionError) {
-			return fmt.Errorf("No movie found")
+			return Movie{}, fmt.Errorf("No movie found")
 		}
 		log.Printf("failed to delete item from DynamoDB: %v", err)
-		return fmt.Errorf("failed to delete item from DynamoDB: %w", err)
+		return Movie{}, fmt.Errorf("failed to delete item from DynamoDB: %w", err)
 	}
 
-	return nil
+	var movie Movie
+	if err := attributevalue.UnmarshalMap(result.Attributes, &movie); err != nil {
+		log.Printf("Couldn't unmarshall response. Here's why: %v\n", err)
+		return Movie{}, err
+	}
+	return movie, nil
 }
 
 func AddMovie_DB(movie Movie) error {
