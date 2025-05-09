@@ -61,3 +61,19 @@ func PutObject_S3(fileHeader *multipart.FileHeader, objectKey string) (string, e
 
 	return objectUrl, nil
 }
+
+func DeleteObject_S3(objectKey string) error {
+	log.Print("Inside DeleteObject_S3 func")
+
+	key := fmt.Sprintf("%v/%v", s3Prefix, objectKey)
+
+	_, err := S3Client.DeleteObject(context.TODO(), &s3.DeleteObjectInput{
+		Bucket: aws.String(BUCKET_NAME),
+		Key:    aws.String(key),
+	})
+
+	if err != nil {
+		return err
+	}
+	return nil
+}

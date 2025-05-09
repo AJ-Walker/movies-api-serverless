@@ -416,8 +416,20 @@ func deleteMovie(movieId string) (events.APIGatewayProxyResponse, error) {
 		return response(http.StatusBadRequest, false, "movieId cannot be empty", nil), nil
 	}
 
-	if err := DeleteMovieById_DB(movieId); err != nil {
+	movie, err := DeleteMovieById_DB(movieId)
+	if err != nil {
 		return response(http.StatusBadRequest, false, err.Error(), nil), nil
+	}
+
+	if movie.CoverUrl != "" {
+
+		splittedString := strings.Split(movie.CoverUrl, "/")
+
+		objectKey := splittedString[len(splittedString)-1]
+		log.Printf("ObjectKey: %v", objectKey)
+		if err := DeleteObject_S3(objectKey); err != nil {
+			log.Printf("Error while deleting object: %v", err)
+		}
 	}
 
 	return response(http.StatusOK, true, "Movie deleted successfully", nil), nil
