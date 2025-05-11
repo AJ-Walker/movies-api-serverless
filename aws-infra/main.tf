@@ -39,6 +39,8 @@ resource "aws_s3_bucket_public_access_block" "movies_rest_api_bucket_public_acce
 resource "aws_s3_bucket_policy" "allow_get_images_policy" {
   bucket = aws_s3_bucket.movies_rest_api_bucket.id
   policy = data.aws_iam_policy_document.allow_get_s3_images_policy.json
+
+  depends_on = [aws_s3_bucket_public_access_block.movies_rest_api_bucket_public_access]
 }
 
 # DynamoDB
