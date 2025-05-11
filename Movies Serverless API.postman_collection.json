@@ -1,0 +1,631 @@
+{
+	"info": {
+		"_postman_id": "2f945fbe-a0c8-4647-ac37-e69e1b541648",
+		"name": "Movies Serverless API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "14935279"
+	},
+	"item": [
+		{
+			"name": "Get All Movies",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response status code is 200\", function () {",
+							"    pm.expect(pm.response.code).to.equal(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Response has the required fields - movieId, title, releaseYear, genre, and coverUrl\", function () {",
+							"    const responseData = pm.response.json();",
+							"",
+							"    pm.expect(responseData).to.be.an('object');",
+							"    pm.expect(responseData.data).to.be.an('array');",
+							"    ",
+							"    responseData.data.forEach(function(movie) {",
+							"        pm.expect(movie).to.have.property('movieId').that.is.a('string');",
+							"        pm.expect(movie).to.have.property('title').that.is.a('string');",
+							"        pm.expect(movie).to.have.property('releaseYear').that.is.a('number');",
+							"        pm.expect(movie).to.have.property('genre').that.is.a('string');",
+							"        pm.expect(movie).to.have.property('coverUrl').that.is.a('string');",
+							"    });",
+							"});",
+							"",
+							"",
+							"pm.test(\"Movie data properties are valid\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData).to.be.an('object');",
+							"    ",
+							"    responseData.data.forEach(function(movie) {",
+							"        pm.expect(movie.movieId).to.be.a('string').and.to.have.lengthOf.at.least(1, \"MovieId should be a non-empty string\");",
+							"        pm.expect(movie.title).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Title should be a non-empty string\");",
+							"        pm.expect(movie.releaseYear).to.be.a('number').and.to.be.at.least(0, \"ReleaseYear should be a non-negative integer\");",
+							"        pm.expect(movie.genre).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Genre should be a non-empty string\");",
+							"    });",
+							"});",
+							"",
+							"",
+							"pm.test(\"Status field should be a boolean value\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData.status).to.be.a('boolean');",
+							"});",
+							"",
+							"pm.test(\"Response Content-Type is application/json\", function () {",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+							"});",
+							"",
+							"",
+							"pm.test(\"Response has the required fields - movieId, title, releaseYear, genre, and coverUrl\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData).to.be.an('object');",
+							"    pm.expect(responseData.data).to.be.an('array').that.is.not.empty;",
+							"",
+							"    responseData.data.forEach((movie) => {",
+							"        pm.expect(movie).to.include.all.keys('movieId', 'title', 'releaseYear', 'genre', 'coverUrl');",
+							"    });",
+							"});",
+							"",
+							"",
+							"pm.test(\"Data array is present and contains expected number of elements\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData).to.be.an('object');",
+							"    pm.expect(responseData.data).to.exist.and.to.be.an('array');",
+							"    pm.expect(responseData.data).to.have.lengthOf.at.least(1);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Movie data properties are valid\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData).to.be.an('object');",
+							"    pm.expect(responseData.data).to.be.an('array');",
+							"    ",
+							"    responseData.data.forEach(function(movie) {",
+							"        pm.expect(movie).to.have.property('movieId').that.is.a('string');",
+							"        pm.expect(movie).to.have.property('title').that.is.a('string');",
+							"        pm.expect(movie).to.have.property('releaseYear').that.is.a('number');",
+							"        pm.expect(movie).to.have.property('genre').that.is.a('string');",
+							"        pm.expect(movie).to.have.property('coverUrl').that.is.a('string');",
+							"    });",
+							"});",
+							"",
+							"",
+							"pm.test(\"Status field should be a boolean value\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData.status).to.be.a('boolean');",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://{{API_URL}}/dev/api/movies",
+					"protocol": "https",
+					"host": [
+						"{{API_URL}}"
+					],
+					"path": [
+						"dev",
+						"api",
+						"movies"
+					]
+				},
+				"description": "The endpoint retrieves a list of movies from the server.\n\n### Response\n\nThe response will be in JSON format with the following schema:\n\n``` json\n{\n    \"type\": \"object\",\n    \"properties\": {\n        \"status\": {\n            \"type\": \"boolean\"\n        },\n        \"data\": {\n            \"type\": \"array\",\n            \"items\": {\n                \"type\": \"object\",\n                \"properties\": {\n                    \"movieId\": {\n                        \"type\": \"string\"\n                    },\n                    \"title\": {\n                        \"type\": \"string\"\n                    },\n                    \"releaseYear\": {\n                        \"type\": \"integer\"\n                    },\n                    \"genre\": {\n                        \"type\": \"string\"\n                    },\n                    \"coverUrl\": {\n                        \"type\": \"string\"\n                    }\n                }\n            }\n        },\n        \"message\": {\n            \"type\": \"string\"\n        },\n        \"statusCode\": {\n            \"type\": \"integer\"\n        }\n    }\n}\n\n ```\n\n### Response\n\nThe response will be in JSON format with the following schema:\n\n``` json\n{\n    \"type\": \"object\",\n    \"properties\": {\n        \"status\": {\n            \"type\": \"boolean\"\n        },\n        \"data\": {\n            \"type\": \"array\",\n            \"items\": {\n                \"type\": \"object\",\n                \"properties\": {\n                    \"movieId\": {\n                        \"type\": \"string\"\n                    },\n                    \"title\": {\n                        \"type\": \"string\"\n                    },\n                    \"releaseYear\": {\n                        \"type\": \"integer\"\n                    },\n                    \"genre\": {\n                        \"type\": \"string\"\n                    },\n                    \"coverUrl\": {\n                        \"type\": \"string\"\n                    }\n                }\n            }\n        },\n        \"message\": {\n            \"type\": \"string\"\n        },\n        \"statusCode\": {\n            \"type\": \"integer\"\n        }\n    }\n}\n\n ```"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Movies By Year",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response content type is application/json\", function () {",
+							"  pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+							"});",
+							"",
+							"",
+							"pm.test(\"Status should be true\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData.status).to.be.true;",
+							"});",
+							"",
+							"",
+							"pm.test(\"Validate the data array\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData).to.be.an('object');",
+							"    pm.expect(responseData.data).to.be.an('array').and.to.have.lengthOf.at.least(1, \"Data array should not be empty\");",
+							"    responseData.data.forEach(function(movie) {",
+							"        pm.expect(movie).to.be.an('object');",
+							"        pm.expect(movie.movieId).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Movie ID should not be empty\");",
+							"        pm.expect(movie.title).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Title should not be empty\");",
+							"        pm.expect(movie.releaseYear).to.be.a('number').and.to.be.above(0, \"Release year should be a valid year\");",
+							"        pm.expect(movie.genre).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Genre should not be empty\");",
+							"        pm.expect(movie.coverUrl).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Cover URL should not be empty\");",
+							"    });",
+							"});",
+							"",
+							"",
+							"pm.test(\"Title and genre fields are non-empty strings\", function () {",
+							"  const responseData = pm.response.json();",
+							"  ",
+							"  pm.expect(responseData).to.be.an('object');",
+							"  pm.expect(responseData.data).to.be.an('array');",
+							"  ",
+							"  responseData.data.forEach(function(movie) {",
+							"    pm.expect(movie.title).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Title should not be empty\");",
+							"    pm.expect(movie.genre).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Genre should not be empty\");",
+							"  });",
+							"});",
+							"",
+							"",
+							"pm.test(\"Release year is a non-negative integer\", function () {",
+							"  const responseData = pm.response.json();",
+							"  ",
+							"  pm.expect(responseData).to.be.an('object');",
+							"  responseData.data.forEach(function(movie) {",
+							"    pm.expect(movie.releaseYear).to.be.a('number').and.to.be.at.least(0);",
+							"  });",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://{{API_URL}}/dev/api/movies?year=1999",
+					"protocol": "https",
+					"host": [
+						"{{API_URL}}"
+					],
+					"path": [
+						"dev",
+						"api",
+						"movies"
+					],
+					"query": [
+						{
+							"key": "year",
+							"value": "1999"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Movie Summary",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response status code is 400\", function () {",
+							"    pm.expect(pm.response.code).to.equal(400);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Status field should exist and be a boolean\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData).to.be.an('object');",
+							"    pm.expect(responseData.status).to.exist.and.to.be.a('boolean');",
+							"});",
+							"",
+							"",
+							"pm.test(\"Data field should be null\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData.data).to.be.null;",
+							"});",
+							"",
+							"",
+							"pm.test(\"Message field is present and is a non-empty string\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData).to.be.an('object');",
+							"    pm.expect(responseData.message).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1, \"Message should not be empty\");",
+							"});",
+							"",
+							"",
+							"pm.test(\"StatusCode field should exist and be a number\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData.statusCode).to.exist;",
+							"    pm.expect(responseData.statusCode).to.be.a('number');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://{{API_URL}}/dev/api/movies/summary?movieId=01956766-a4a2-7845-8dac-294bd2ce0f65",
+					"protocol": "https",
+					"host": [
+						"{{API_URL}}"
+					],
+					"path": [
+						"dev",
+						"api",
+						"movies",
+						"summary"
+					],
+					"query": [
+						{
+							"key": "movieId",
+							"value": "01956766-a4a2-7845-8dac-294bd2ce0f65"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Movie By MovieId",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response status code is 200\", function () {",
+							"    pm.expect(pm.response.code).to.equal(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Content-Type header is application/json\", function () {",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+							"});",
+							"",
+							"",
+							"pm.test(\"Response has the required fields - movieId, title, releaseYear, genre, and coverUrl\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData).to.be.an('object');",
+							"    pm.expect(responseData).to.include.all.keys('movieId', 'title', 'releaseYear', 'genre', 'coverUrl');",
+							"});",
+							"",
+							"",
+							"pm.test(\"Status should be a boolean value\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData.status).to.be.a('boolean');",
+							"});",
+							"",
+							"",
+							"pm.test(\"Message is a non-empty string\", function () {",
+							"  const responseData = pm.response.json();",
+							"  ",
+							"  pm.expect(responseData.message).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Message should not be empty\");",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://{{API_URL}}/dev/api/movies?movieId=0196b36e-62cd-7c87-b6a4-b4d6e88a4c7f",
+					"protocol": "https",
+					"host": [
+						"{{API_URL}}"
+					],
+					"path": [
+						"dev",
+						"api",
+						"movies"
+					],
+					"query": [
+						{
+							"key": "movieId",
+							"value": "0196b36e-62cd-7c87-b6a4-b4d6e88a4c7f"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Movie By MovieId",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response status code is 400\", function () {",
+							"    pm.expect(pm.response.code).to.equal(400);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Content-Type is application/json\", function () {",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+							"});",
+							"",
+							"",
+							"pm.test(\"Verify that the status field is a boolean\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData.status).to.be.a('boolean');",
+							"});",
+							"",
+							"",
+							"pm.test(\"Data field should be null\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData.data).to.be.null;",
+							"});",
+							"",
+							"",
+							"pm.test(\"Message field is a non-empty string\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData.message).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Message should not be empty\");",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://{{API_URL}}/dev/api/movies?movieId=0196b36e-62cd-7c87-b6a4-b4d6e88a4c7f",
+					"protocol": "https",
+					"host": [
+						"{{API_URL}}"
+					],
+					"path": [
+						"dev",
+						"api",
+						"movies"
+					],
+					"query": [
+						{
+							"key": "movieId",
+							"value": "0196b36e-62cd-7c87-b6a4-b4d6e88a4c7f"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Movie",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response status code is 400\", function () {",
+							"    pm.expect(pm.response.code).to.equal(400);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Response has the required fields\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData).to.be.an('object');",
+							"    pm.expect(responseData).to.have.property('status');",
+							"    pm.expect(responseData).to.have.property('data');",
+							"    pm.expect(responseData).to.have.property('message');",
+							"    pm.expect(responseData).to.have.property('statusCode');",
+							"});",
+							"",
+							"",
+							"pm.test(\"Data is null when status is true\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData.status).to.equal(true);",
+							"    pm.expect(responseData.data).to.be.null;",
+							"});",
+							"",
+							"",
+							"pm.test(\"Message is an empty string\", function () {",
+							"  const responseData = pm.response.json();",
+							"  ",
+							"  pm.expect(responseData.message).to.equal(\"\");",
+							"});",
+							"",
+							"",
+							"pm.test(\"Content-Type header is application/json\", function () {",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "title",
+							"value": "Bird Box",
+							"type": "text"
+						},
+						{
+							"key": "releaseYear",
+							"value": "2018",
+							"type": "text"
+						},
+						{
+							"key": "genre",
+							"value": "Horror, Science Fiction",
+							"type": "text"
+						},
+						{
+							"key": "coverImage",
+							"type": "file",
+							"src": "postman-cloud:///1f0179fb-e279-4770-abcb-279ab241a934"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://{{API_URL}}/dev/api/movies",
+					"protocol": "https",
+					"host": [
+						"{{API_URL}}"
+					],
+					"path": [
+						"dev",
+						"api",
+						"movies"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Movie By MovieId",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response status code is 200\", function () {",
+							"  pm.expect(pm.response.code).to.equal(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Response has the required fields\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData).to.be.an('object');",
+							"    pm.expect(responseData).to.have.property('status');",
+							"    pm.expect(responseData).to.have.property('data');",
+							"    pm.expect(responseData).to.have.property('message');",
+							"    pm.expect(responseData).to.have.property('statusCode');",
+							"});",
+							"",
+							"",
+							"pm.test(\"Status field is a boolean value\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData).to.be.an('object');",
+							"    pm.expect(responseData.status).to.be.a('boolean');",
+							"});",
+							"",
+							"",
+							"pm.test(\"Verify that the data field is either null or an object/array\", function () {",
+							"    const responseData = pm.response.json();",
+							"",
+							"    pm.expect(responseData).to.have.property('data').that.is.oneOf([null, pm.expect.it('to be an object').to.be.an('object'), pm.expect.it('to be an array').to.be.an('array')]);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Message is a non-empty string\", function () {",
+							"  const responseData = pm.response.json();",
+							"  ",
+							"  pm.expect(responseData).to.be.an('object');",
+							"  pm.expect(responseData.message).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Message should not be empty\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "title",
+							"value": "Sinners",
+							"type": "text"
+						},
+						{
+							"key": "releaseYear",
+							"value": "2025",
+							"type": "text"
+						},
+						{
+							"key": "genre",
+							"value": "Action, Horror, Thriller",
+							"type": "text"
+						},
+						{
+							"key": "coverImage",
+							"type": "file",
+							"src": "postman-cloud:///1f02bc6b-7c84-4600-95e6-edad1bb4e05b"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://{{API_URL}}/dev/api/movies?movieId=0196ae30-1da0-78c1-bc19-786e11182e26",
+					"protocol": "https",
+					"host": [
+						"{{API_URL}}"
+					],
+					"path": [
+						"dev",
+						"api",
+						"movies"
+					],
+					"query": [
+						{
+							"key": "movieId",
+							"value": "0196ae30-1da0-78c1-bc19-786e11182e26"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
