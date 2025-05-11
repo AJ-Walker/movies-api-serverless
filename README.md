@@ -12,7 +12,9 @@ A simple yet powerful movie management system built with Go, featuring a RESTful
 ├── lambda-code/       # AWS Lambda function source code
 │   ├── main.go        # Core Lambda function implementation
 │   ├── bedrock.go     # AWS Bedrock integration for AI-generated summaries
-│   └── dynamoDB.go    # DynamoDB operations for data storage and retrieval
+│   ├── dynamoDB.go    # DynamoDB operations for data storage and retrieval
+│   ├── s3.go          # S3 operations for movie posters
+│   └── utils.go       # Utility functions
 └── movies-api/        # Movies API testing and data loading utilities
     ├── main.go        # API implementation and data insertion logic
     └── movies.json    # Sample movie data in JSON format
@@ -124,7 +126,18 @@ https://ty1fryoc2g.execute-api.ap-south-1.amazonaws.com/dev
 
 - `GET /api/movies` - Retrieve a list of all movies.
 - `GET /api/movies?year={year}` - Filter movies by release year.
+- `GET /api/movies?movieId={movieId}` - Get a specific movie by ID.
+- `POST /api/movies` - Add a new movie (accepts multipart form data with title, releaseYear, genre, and optional coverImage).
+- `PUT /api/movies?movieId={movieId}` - Update a movie's details and/or poster image (accepts multipart form data with title, releaseYear, genre, and optional coverImage).
+- `DELETE /api/movies?movieId={movieId}` - Delete a movie and its associated poster from S3.
 - `GET /api/movies/summary?movieId={movieId}` - Fetch an AI-generated summary for a specific movie.
+
+## DynamoDB Schema
+
+The movie data is stored in DynamoDB with the following structure:
+
+- `movieId` (Primary Key): Unique identifier for each movie
+- Note: Previously, `releaseYear` was used as a sort key, but it has been removed to simplify the schema and allow for more flexible querying.
 
 ## Movie Summary Feature
 
@@ -141,8 +154,12 @@ The system leverages AWS Bedrock to generate detailed movie summaries:
 Managed via Terraform, the AWS setup includes:
 
 - **AWS Lambda**: Executes the serverless logic.
-- **API Gateway**: Exposes the RESTful API.
-- **S3 Buckets**: Stores movie poster images.
+- **API Gateway**: 
+  - Exposes the RESTful API.
+  - Uses proxy integration for flexible routing and request handling.
+  - Configured to route all requests to the Lambda function for centralized processing.
+  - Handles query parameters through centralized routing for flexible request processing.
+- **S3 Buckets**: Stores movie poster images with automated deletion when movies are removed.
 - **IAM Roles/Policies**: Ensures secure resource access.
 - **DynamoDB**: Persists movie data and summaries.
 
