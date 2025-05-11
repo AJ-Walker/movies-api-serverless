@@ -94,6 +94,8 @@ Edit the relevant files as needed:
 - `main.go`: Core Lambda logic.
 - `bedrock.go`: Bedrock integration for summaries.
 - `dynamoDB.go`: DynamoDB interactions.
+- `s3.go`: S3 interactions.
+- `utils.go`: Contains some utility functions.
 
 3. Recompile for Lambda
 
@@ -131,6 +133,49 @@ https://ty1fryoc2g.execute-api.ap-south-1.amazonaws.com/dev
 - `PUT /api/movies?movieId={movieId}` - Update a movie's details and/or poster image (accepts multipart form data with title, releaseYear, genre, and optional coverImage).
 - `DELETE /api/movies?movieId={movieId}` - Delete a movie and its associated poster from S3.
 - `GET /api/movies/summary?movieId={movieId}` - Fetch an AI-generated summary for a specific movie.
+
+## API Testing with Postman
+
+A Postman collection has been included in this repository to help you test and interact with the API. This collection contains pre-configured requests for all available endpoints, complete with test scripts to validate responses.
+
+### Setting Up the Postman Collection
+
+1. **Import the Collection**:
+   - Open Postman
+   - Click on "Import" button in the top left
+   - Select the `Movies Serverless API.postman_collection.json` file from the project root
+   - The collection should appear in your Postman workspace
+
+2. **Configure Environment Variable**:
+   - Create a new environment in Postman (click on "Environments" tab)
+   - Add a variable named `API_URL` with the value of your API Gateway URL (without protocol and without trailing slash)
+   - Example: If your URL is `https://ty1fryoc2g.execute-api.ap-south-1.amazonaws.com/dev`, set `API_URL` to `ty1fryoc2g.execute-api.ap-south-1.amazonaws.com`
+   - Save the environment and make sure to select it when using the collection
+
+### Using the Collection
+
+The collection contains the following requests:
+
+1. **Get All Movies**: Retrieves the complete list of movies
+2. **Get Movies By Year**: Filters movies by a specific release year
+3. **Get Movie By MovieId**: Retrieves a specific movie by its ID
+4. **Get Movie Summary**: Fetches the AI-generated summary for a movie
+5. **Add Movie**: Creates a new movie entry with optional cover image
+6. **Update Movie By MovieId**: Updates an existing movie's details
+7. **Delete Movie By MovieId**: Removes a movie from the database
+
+Each request includes:
+- Appropriate HTTP method
+- Required path and query parameters
+- Test scripts to validate responses
+- Description of the expected request/response format
+
+For requests that require a movie ID (such as Get Movie By MovieId, Delete Movie, etc.), you'll need to:
+1. First run the "Get All Movies" request
+2. Copy a movie ID from the response
+3. Paste it into the appropriate parameter for the subsequent request
+
+For the Add Movie and Update Movie requests that accept file uploads, you can select any image file from your local system for testing.
 
 ## DynamoDB Schema
 
