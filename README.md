@@ -222,25 +222,6 @@ This helps avoid unintended infrastructure modifications.
 ## Future Changes
 1. ...
 
-## Troubleshooting
-
-- **AWS S3 Bucket Policy Issue During** `terraform apply`:
-  Sometimes, when running `terraform apply`, you may encounter an error related to S3 bucket policies due to state mismatches or permission conflicts. To resolve this:
-
-1. Run a Terraform refresh to sync the state with the actual AWS resources:
-
-```bash
-terraform refresh
-```
-
-2.  Apply the changes again:
-
-```bash
-terraform apply
-```
-
-This ensures Terraform has the latest state and can resolve policy-related issues.
-
 ## Contributing
 
 1. Fork the repository.
